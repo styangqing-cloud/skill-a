@@ -1,25 +1,13 @@
 ---
 name: employee-interview-analyzer
-<<<<<<< HEAD
-description: 员工访谈分析技能 - 基于访谈内容进行深度分析，支持个体分析、组织分析和招聘面试评估三种模式
-author: tommyyang@tencent
-github: https://github.com/styangqing-cloud
-license: MIT
-last_updated: 2026-03-15
-version: 1.1.0
----
-
-# employee-interview-analyzer
-=======
-description: 互联网公司员工访谈结果智能分析技能。基于7种专业方法论（杨三角理论、韦斯伯德六盒模型、推拉力理论、冰山模型、BEM模型、职业锚理论+GROW模型、STAR面试法），⭐每次分析严格限制最多使用3种方法论⭐，⭐组织诊断类方法论（杨三角/六盒模型）最多只选一个，优先使用杨三角理论⭐，自动识别访谈场景、智能匹配最佳分析框架，对访谈记录进行深度分析并生成结构化洞察报告。v2.3 新增场景自动识别无需询问、方法论优化规则。
+description: 互联网公司员工访谈结果智能分析技能。基于7种专业方法论（杨三角理论、韦斯伯德六盒模型、推拉力理论、冰山模型、BEM模型、职业锚理论+GROW模型、STAR面试法），⭐每次分析严格限制最多使用3种方法论⭐，⭐组织诊断类方法论（杨三角/六盒模型）最多只选一个，优先使用杨三角理论⭐，自动识别访谈场景、智能匹配最佳分析框架，对访谈记录进行深度分析并生成结构化洞察报告。v2.4 新增可视化HTML文件自动生成、员工画像导出询问功能。
 author: tommyyang@tencent
 homepage: https://github.com/openclaw/workspace
 repository: https://github.com/openclaw/workspace/tree/main/skills/employee-interview-analyzer
-version: 2.3.0
+version: 2.4.0
 license: Apache-2.0
 tags: ["hr", "interview", "analysis", "employee", "组织诊断", "访谈分析", "杨三角", "韦斯伯德", "推拉力", "冰山模型", "BEM", "职业锚", "STAR", "AI", "人力资源", "洞察", "智能分析", "可视化", "画像", "报告", "文本修正", "战场画像", "组织画像"]
 ---
->>>>>>> bcd8777 (feat: v2.3.0 流程优化、方法论限制强化、场景自动识别)
 
 # Employee Interview Analyzer - 员工访谈结果智能分析技能
 
@@ -1066,23 +1054,25 @@ Step 4: 二次验证，形成最终结论
 
 ---
 
-## 📊 数据可视化分析（v2.2 增强版 - 自动判断）
+## 📊 数据可视化分析（v2.4 增强版 - 自动生成HTML文件）
 
-> **v2.2.0 变更**：根据访谈内容自动判断是否需要生成数据可视化，无需询问用户
+> **v2.4.0 变更**：根据访谈内容自动判断并生成HTML可视化文件，使用Chart.js实现交互式图表
 
-### 自动判断规则
+### 自动判断与生成规则
 
 **何时生成可视化：**
 
 | 条件 | 说明 | 触发可视化 |
 |------|------|-----------|
-| **多维度评分** | 访谈分析中有3个以上维度的量化评分 | ✅ 自动生成 |
-| **对比分析** | 存在多个对象、多个时间点、多个维度的对比 | ✅ 自动生成 |
-| **趋势分析** | 多次访谈或时间序列数据 | ✅ 自动生成 |
-| **优先级评估** | 问题评分、改进优先级等 | ✅ 自动生成 |
+| **多维度评分** | 访谈分析中有3个以上维度的量化评分 | ✅ 自动生成雷达图 |
+| **对比分析** | 存在多个对象、多个时间点、多个维度的对比 | ✅ 自动生成柱状图 |
+| **趋势分析** | 多次访谈或时间序列数据 | ✅ 自动生成折线图 |
+| **优先级评估** | 问题评分、改进优先级等 | ✅ 自动生成柱状图 |
 | **简单访谈** | 单次访谈、无量化评分、无对比需求 | ❌ 不生成 |
 
-**判断逻辑：**
+### 生成流程
+
+**Step 1: 判断是否需要可视化**
 ```python
 def should_generate_visualization(analysis_result: dict) -> dict:
     """
@@ -1115,6 +1105,33 @@ def should_generate_visualization(analysis_result: dict) -> dict:
         "chart_types": chart_types,
         "reason": "检测到{}类适合可视化的数据".format(len(chart_types)) if should_generate else "访谈内容无需可视化"
     }
+```
+
+**Step 2: 生成HTML可视化文件**
+```python
+from visualization_generator import generate_visualizations
+
+# 生成可视化文件
+generated_files = generate_visualizations(
+    analysis_result={
+        "interviewee": "翁行",
+        "chart_title": "翁行-AI素养评估",
+        "scores": {
+            "AI工具素养": 5.0,
+            "人机协作": 4.0,
+            "岗位演进认知": 5.0,
+            "组织AI成熟度": 2.0
+        },
+        "ideal_scores": {
+            "AI工具素养": 5.0,
+            "人机协作": 5.0,
+            "岗位演进认知": 5.0,
+            "组织AI成熟度": 5.0
+        }
+    },
+    output_dir="."
+)
+# 返回生成的HTML文件列表，可在浏览器中打开查看
 ```
 
 ### 雷达图分析
@@ -1177,9 +1194,51 @@ const lineData = {
 
 ---
 
-## 👤 被访谈者画像描绘（v2.2 增强版 - 自动呈现）
+## 👤 被访谈者画像描绘（v2.4 增强版 - 自动呈现+导出询问）
 
-> **v2.2.0 变更**：员工画像自动呈现，无需询问用户；新增"战场画像"分析
+> **v2.4.0 变更**：员工画像自动呈现，并在分析完成后询问是否导出为补充材料
+
+### 画像生成流程
+
+**Step 1: 自动生成员工画像**
+- 基于访谈内容提取能力特征、性格模式、职业锚等
+- 自动包含在完整分析报告中
+
+**Step 2: 询问是否导出为补充材料**
+```markdown
+---
+✅ 员工画像已生成完成！
+
+💡 **是否需要将此员工画像导出为补充材料?**
+
+此画像可用于:
+1. 补充到 HR 系统的员工档案
+2. 作为员工发展计划的参考
+3. 岗位匹配评估的依据
+
+**导出选项:**
+1. ✅ 导出为 Markdown 文件
+2. ✅ 导出为腾讯文档
+3. ❌ 不需要导出
+
+请告诉我您的选择 (回复 1/2/3):
+---
+```
+
+**Step 3: 执行导出**
+```python
+from export_profile import export_profile
+
+# 导出为 Markdown
+md_file = export_profile(
+    profile_data=profile_data,
+    name="翁行",
+    output_dir="."
+)
+
+# 导出为腾讯文档
+# node scripts/upload_to_docs.js "翁行-员工画像" md_file
+```
 
 ### 基础画像信息
 | 维度 | 内容 |
@@ -1745,6 +1804,25 @@ const lineData = {
 | **配套技能** | [employee-interview-generator v3.1.0](https://github.com/openclaw/workspace/tree/main/skills/employee-interview-generator) |
 
 ### 📝 更新日志
+
+**v2.4.0** (2026-03-24) ⭐ 可视化HTML生成、员工画像导出询问
+- 📊 **数据可视化HTML文件自动生成**：
+  - 根据访谈内容自动判断并生成HTML可视化文件
+  - 使用Chart.js实现交互式图表（雷达图、柱状图、折线图）
+  - 新增 `scripts/visualization_generator.py` 脚本
+  - 生成的HTML文件可在浏览器直接打开查看
+- 👤 **员工画像导出询问**：
+  - 分析完成后询问用户是否导出员工画像
+  - 新增 `scripts/export_profile.py` 脚本
+  - 支持导出为Markdown或腾讯文档格式
+  - 导出的画像可作为补充材料用于HR档案
+- 📋 **新增脚本支持**：
+  - `visualization_generator.py`: 数据可视化生成脚本
+  - `export_profile.py`: 员工画像导出脚本
+- 🔄 **更新SKILL.md**：
+  - 更新数据可视化章节，增加HTML生成说明
+  - 更新员工画像章节，增加导出询问逻辑
+- 📝 **向后兼容**：所有优化不影响现有功能
 
 **v2.3.0** (2026-03-24) ⭐ 流程优化、方法论限制强化、场景自动识别
 - ⭐⭐ **去除Step 0场景询问**：
